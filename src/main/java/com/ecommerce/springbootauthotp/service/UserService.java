@@ -90,4 +90,21 @@ public class UserService {
         int code = random.nextInt(900000) + 100000;
         return String.valueOf(code);
     }
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElse(null);
+    }
+    public User checkMailUser(String email){
+        Optional<User> user = userRepository.findByEmail(email);
+        User u = user.get();
+        u.setVerificationCode(generateVerificationCode());
+        u.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
+        sendVerificationEmail(u);
+        return userRepository.save(u);
+    }
+    public User save(User user){
+        return userRepository.save(user);
+    }
+
+
 }
